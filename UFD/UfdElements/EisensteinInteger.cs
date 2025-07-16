@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
-namespace UFD;
+namespace UFD.UfdElements;
 
 public readonly struct EisensteinInteger(int re, int om) :
     IAdditionOperators<EisensteinInteger, EisensteinInteger, EisensteinInteger>,
@@ -54,8 +54,8 @@ public readonly struct EisensteinInteger(int re, int om) :
         if (right.IsZero)
             throw new DivideByZeroException();
 
-        double newRe = left.Re * right.Re + right.Om * (left.Om - left.Re);
-        double newOm = left.Om * right.Re - left.Re * right.Om;
+        double newRe = (left.Re * right.Re) + (right.Om * (left.Om - left.Re));
+        double newOm = (left.Om * right.Re) - (left.Re * right.Om);
 
         double bNorm = right.NormSquared();
 
@@ -65,13 +65,12 @@ public readonly struct EisensteinInteger(int re, int om) :
         return new EisensteinInteger(newRe2, newOm2);
     }
 
-    public static EisensteinInteger operator %(EisensteinInteger a, EisensteinInteger b)
+    public static EisensteinInteger operator %(EisensteinInteger left, EisensteinInteger right)
     {
-        var q = a / b;
+        var q = left / right;
+        q = left - (q * right);
 
-        q = a - (q * b);
-
-        Debug.Assert(q.NormSquared() < b.NormSquared(), "Error in division algorithm");
+        Debug.Assert(q.NormSquared() < right.NormSquared(), "Error in division algorithm");
 
         return q;
     }
@@ -93,7 +92,7 @@ public readonly struct EisensteinInteger(int re, int om) :
 
     public bool IsZero => Re == 0 && Om == 0;
 
-    public double RealPart() => Re - (0.5d * Om);
+    public double RealPart() => Re - 0.5d * Om;
     public double ImaginaryPart() => Om * Sqrt3By2;
 
     public int NormSquared() => checked((Re * Re) + (Om * Om) - (Re * Om));

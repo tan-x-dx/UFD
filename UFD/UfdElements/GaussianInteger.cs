@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
-namespace UFD;
+namespace UFD.UfdElements;
 
 public readonly struct GaussianInteger(int re, int im) :
     IAdditionOperators<GaussianInteger, GaussianInteger, GaussianInteger>,
@@ -64,7 +64,6 @@ public readonly struct GaussianInteger(int re, int im) :
     public static GaussianInteger operator %(GaussianInteger left, GaussianInteger right)
     {
         var q = left / right;
-
         q = left - (q * right);
 
         Debug.Assert(q.NormSquared() < right.NormSquared(), "Error in division algorithm");
