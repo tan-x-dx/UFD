@@ -6,26 +6,36 @@ namespace UFD;
 
 public static class IntegerMethods
 {
-    private const int MaxInt = 10_000_000;
-
-    private static readonly BitArray _primeBits = GeneratePrimes(MaxInt);
+    private static BitArray _primeBits = null!;
 
     public static int NumberOfStoredPrimes => 1 + _primeBits.PopCount;
 
+    public static void Initialise(int maxInt)
+    {
+        _primeBits = GeneratePrimes(maxInt);
+    }
+
     private static BitArray GeneratePrimes(int maxInt)
     {
-        var result = new BitArray(maxInt, true);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxInt);
+
+        var result = new BitArray(maxInt >>> 1, true);
 
         var i = 3;
-        var limit = 1 + (int)Math.Sqrt(maxInt);
 
-        while (i < limit)
+        var iLimit = 1 + (int)Math.Sqrt(result.Length);
+
+        while (i < iLimit)
         {
+            var j = i * i;
             var delta = i + i;
-            for (var j = i * i; j < result.Length; j += delta)
+            var bitIndex = ConvertToBitIndex(j);
+
+            while (bitIndex < result.Length)
             {
-                var bitIndex = ConvertToBitIndex(j);
                 result.ClearBit(bitIndex);
+                j += delta;
+                bitIndex = ConvertToBitIndex(j);
             }
 
             i += 2;
