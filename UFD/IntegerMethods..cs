@@ -10,6 +10,8 @@ public static class IntegerMethods
 
     private static readonly BitArray _primeBits = GeneratePrimes(MaxPrime);
 
+    public static int NumberOfStoredPrimes => 1 + _primeBits.PopCount;
+
     private static BitArray GeneratePrimes(int maxPrime)
     {
         var result = new BitArray(maxPrime, true);
