@@ -6,18 +6,18 @@ namespace UFD;
 
 public static class IntegerMethods
 {
-    private const int MaxPrime = 10_000_000;
+    private const int MaxInt = 10_000_000;
 
-    private static readonly BitArray _primeBits = GeneratePrimes(MaxPrime);
+    private static readonly BitArray _primeBits = GeneratePrimes(MaxInt);
 
     public static int NumberOfStoredPrimes => 1 + _primeBits.PopCount;
 
-    private static BitArray GeneratePrimes(int maxPrime)
+    private static BitArray GeneratePrimes(int maxInt)
     {
-        var result = new BitArray(maxPrime, true);
+        var result = new BitArray(maxInt, true);
 
         var i = 3;
-        var limit = 1 + (int)Math.Sqrt(maxPrime);
+        var limit = 1 + (int)Math.Sqrt(maxInt);
 
         while (i < limit)
         {
