@@ -6,7 +6,7 @@ namespace UFD.Util;
 
 public static class BitArrayHelpers
 {
-    private const int Shift = 5;
+    public const int Shift = 5;
     private const int Mask = (1 << Shift) - 1;
 
     [Pure]
@@ -23,31 +23,9 @@ public static class BitArrayHelpers
 
         var result = new uint[arrayLength];
         if (setAllBits)
-            PopulateBitArray(result, capacity);
+            new Span<uint>(result).Fill(uint.MaxValue);
 
         return result;
-    }
-
-    private static void PopulateBitArray(Span<uint> bitArray, int requiredPopCount)
-    {
-        ThrowIfInvalidCapacity(requiredPopCount, bitArray.Length);
-
-        var requiredSpanLength = CalculateBitArrayBufferLength(requiredPopCount);
-
-        var subSpan = bitArray[requiredSpanLength..];
-        subSpan.Clear();
-        subSpan = bitArray[..requiredSpanLength];
-        subSpan.Fill(uint.MaxValue);
-
-        var lastIndexPopCount = requiredPopCount & Mask;
-        if (lastIndexPopCount != 0)
-            subSpan[^1] = (1U << lastIndexPopCount) - 1U;
-    }
-
-    private static void ThrowIfInvalidCapacity(int requiredNumberOfItems, int bufferLength)
-    {
-        if (requiredNumberOfItems > (bufferLength << Shift))
-            throw new ArgumentException($"Number of items for Hasher exceeds max capacity of bit buffer! Requires: {requiredNumberOfItems} bits, buffer has {bufferLength << Shift} bits");
     }
 
     /// <summary>
