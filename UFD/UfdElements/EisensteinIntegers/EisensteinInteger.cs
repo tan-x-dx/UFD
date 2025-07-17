@@ -58,7 +58,7 @@ public readonly struct EisensteinInteger(int re, int om) :
         double newRe = left.Re * right.Re + right.Om * (left.Om - left.Re);
         double newOm = left.Om * right.Re - left.Re * right.Om;
 
-        double bNorm = right.NormSquared();
+        double bNorm = right.Norm();
 
         int newRe2 = (int)Math.Round(newRe / bNorm);
         int newOm2 = (int)Math.Round(newOm / bNorm);
@@ -71,7 +71,7 @@ public readonly struct EisensteinInteger(int re, int om) :
         var q = left / right;
         q = left - q * right;
 
-        Debug.Assert(q.NormSquared() < right.NormSquared(), "Error in division algorithm");
+        Debug.Assert(q.Norm() < right.Norm(), "Error in division algorithm");
 
         return q;
     }
@@ -96,14 +96,14 @@ public readonly struct EisensteinInteger(int re, int om) :
     public double RealPart() => Re - 0.5d * Om;
     public double ImaginaryPart() => Om * Sqrt3By2;
 
-    public int NormSquared() => checked(Re * Re + Om * Om - Re * Om);
+    public int Norm() => checked(Re * Re + Om * Om - Re * Om);
 
     public (EisensteinInteger Quotient, EisensteinInteger Remainder) DivRem(EisensteinInteger other)
     {
         var q = this / other;
         var rem = this - q * other;
 
-        Debug.Assert(rem.NormSquared() < other.NormSquared(), "Error in division algorithm");
+        Debug.Assert(rem.Norm() < other.Norm(), "Error in division algorithm");
 
         return (q, rem);
     }
@@ -113,7 +113,7 @@ public readonly struct EisensteinInteger(int re, int om) :
         quotient = this / other;
         remainder = this - quotient * other;
 
-        Debug.Assert(remainder.NormSquared() < other.NormSquared(), "Error in division algorithm");
+        Debug.Assert(remainder.Norm() < other.Norm(), "Error in division algorithm");
     }
 
     public bool Equals(EisensteinInteger other) => Re == other.Re && Om == other.Om;

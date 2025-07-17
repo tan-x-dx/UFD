@@ -51,7 +51,7 @@ public readonly struct GaussianInteger(int re, int im) :
         if (right.IsZero)
             throw new DivideByZeroException();
 
-        double bNorm = right.NormSquared();
+        double bNorm = right.Norm();
 
         int newRe = left.Re * right.Re + left.Im * right.Re;
         int newIm = left.Im * right.Re - left.Re * right.Im;
@@ -67,7 +67,7 @@ public readonly struct GaussianInteger(int re, int im) :
         var q = left / right;
         q = left - q * right;
 
-        Debug.Assert(q.NormSquared() < right.NormSquared(), "Error in division algorithm");
+        Debug.Assert(q.Norm() < right.Norm(), "Error in division algorithm");
 
         return q;
     }
@@ -108,14 +108,14 @@ public readonly struct GaussianInteger(int re, int im) :
     public bool IsZero => Re == 0 && Im == 0;
 
     public double Arg() => Math.Atan2(Im, Re);
-    public int NormSquared() => checked(Re * Re + Im * Im);
+    public int Norm() => checked(Re * Re + Im * Im);
 
     public (GaussianInteger Quotient, GaussianInteger Remainder) DivRem(GaussianInteger other)
     {
         var q = this / other;
         var rem = this - q * other;
 
-        Debug.Assert(rem.NormSquared() < other.NormSquared(), "Error in division algorithm");
+        Debug.Assert(rem.Norm() < other.Norm(), "Error in division algorithm");
 
         return (q, rem);
     }
@@ -125,7 +125,7 @@ public readonly struct GaussianInteger(int re, int im) :
         quotient = this / other;
         remainder = this - quotient * other;
 
-        Debug.Assert(remainder.NormSquared() < other.NormSquared(), "Error in division algorithm");
+        Debug.Assert(remainder.Norm() < other.Norm(), "Error in division algorithm");
     }
 
     public bool Equals(GaussianInteger other) => Re == other.Re && Im == other.Im;

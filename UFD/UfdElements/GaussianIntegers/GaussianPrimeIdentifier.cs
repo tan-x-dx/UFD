@@ -2,7 +2,8 @@
 
 public readonly struct GaussianPrimeIdentifier : IPrimeIdentifier<GaussianInteger>
 {
-    public static bool IsUnit(GaussianInteger x) => x.NormSquared() == 1;
+    public static int Norm(GaussianInteger x) => x.Norm();
+    public static bool IsUnit(GaussianInteger x) => x.Norm() == 1;
     public static bool IsPrime(GaussianInteger x)
     {
         x = x.ToFirstQuadrant();
@@ -13,11 +14,16 @@ public readonly struct GaussianPrimeIdentifier : IPrimeIdentifier<GaussianIntege
                 IntegerMethods.IsPrime(x.Re);
         }
 
-        var normSquared = x.NormSquared();
+        var normSquared = x.Norm();
         if ((normSquared & 3) == 1)
             return IntegerMethods.IsPrime(normSquared);
 
         return x.Re == 1 && x.Im == 1;
+    }
+
+    public static void DivRem(GaussianInteger left, GaussianInteger right, out GaussianInteger quotient, out GaussianInteger remainder)
+    {
+        left.DivRem(right, out quotient, out remainder);
     }
 
     public static IEnumerable<GaussianInteger> GetPrimeList() => GaussianIntegerMethods.GaussianPrimesEnumerable();
