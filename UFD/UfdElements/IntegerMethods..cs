@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using BitArray = UFD.Util.BitArray;
 
-namespace UFD;
+namespace UFD.UfdElements;
 
 public static class IntegerMethods
 {
@@ -12,6 +12,9 @@ public static class IntegerMethods
 
     public static void Initialise(int maxInt)
     {
+        if (_primeBits is not null)
+            throw new InvalidOperationException("Already initialised!");
+
         _primeBits = GeneratePrimes(maxInt);
     }
 
@@ -102,4 +105,6 @@ public readonly struct IntegerPrimeIdentifier : IPrimeIdentifier<int>
 {
     public static bool IsUnit(int x) => x == 1 || x == -1;
     public static bool IsPrime(int x) => IntegerMethods.IsPrime(x);
+
+    public static IEnumerable<int> GetPrimeList() => new IntegerMethods.PrimeEnumerable();
 }

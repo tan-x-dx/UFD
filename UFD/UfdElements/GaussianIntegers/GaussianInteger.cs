@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
-namespace UFD.UfdElements;
+namespace UFD.UfdElements.GaussianIntegers;
 
 public readonly struct GaussianInteger(int re, int im) :
     IAdditionOperators<GaussianInteger, GaussianInteger, GaussianInteger>,
@@ -39,8 +40,8 @@ public readonly struct GaussianInteger(int re, int im) :
 
     public static GaussianInteger operator *(GaussianInteger left, GaussianInteger right)
     {
-        var newRe = (left.Re * right.Re) - (left.Im * right.Im);
-        var newIm = (left.Re * right.Im) + (left.Im * right.Re);
+        var newRe = left.Re * right.Re - left.Im * right.Im;
+        var newIm = left.Re * right.Im + left.Im * right.Re;
 
         return new GaussianInteger(newRe, newIm);
     }
@@ -52,8 +53,8 @@ public readonly struct GaussianInteger(int re, int im) :
 
         double bNorm = right.NormSquared();
 
-        int newRe = (left.Re * right.Re) + (left.Im * right.Re);
-        int newIm = (left.Im * right.Re) - (left.Re * right.Im);
+        int newRe = left.Re * right.Re + left.Im * right.Re;
+        int newIm = left.Im * right.Re - left.Re * right.Im;
 
         newRe = (int)Math.Round(newRe / bNorm);
         newIm = (int)Math.Round(newIm / bNorm);
@@ -64,7 +65,7 @@ public readonly struct GaussianInteger(int re, int im) :
     public static GaussianInteger operator %(GaussianInteger left, GaussianInteger right)
     {
         var q = left / right;
-        q = left - (q * right);
+        q = left - q * right;
 
         Debug.Assert(q.NormSquared() < right.NormSquared(), "Error in division algorithm");
 
@@ -86,14 +87,33 @@ public readonly struct GaussianInteger(int re, int im) :
     public static GaussianInteger operator *(GaussianInteger g, int n) => new(g.Re * n, g.Im * n);
     public static GaussianInteger operator *(int n, GaussianInteger g) => new(n * g.Re, n * g.Im);
 
+    public GaussianInteger ToFirstQuadrant()
+    {
+        const double PiBy2 = Math.PI / 2;
+
+        var arg = Arg();
+
+        if (0 <= arg && arg < PiBy2)
+            return this;
+
+        if (PiBy2 <= arg && arg < Math.PI)
+            return this * NegativeI;
+
+        if (-PiBy2 <= arg && arg < 0)
+            return this * I;
+
+        return this * NegativeOne;
+    }
+
     public bool IsZero => Re == 0 && Im == 0;
 
-    public int NormSquared() => checked((Re * Re) + (Im * Im));
+    public double Arg() => Math.Atan2(Im, Re);
+    public int NormSquared() => checked(Re * Re + Im * Im);
 
     public (GaussianInteger Quotient, GaussianInteger Remainder) DivRem(GaussianInteger other)
     {
         var q = this / other;
-        var rem = this - (q * other);
+        var rem = this - q * other;
 
         Debug.Assert(rem.NormSquared() < other.NormSquared(), "Error in division algorithm");
 
@@ -103,7 +123,7 @@ public readonly struct GaussianInteger(int re, int im) :
     public void DivRem(GaussianInteger other, out GaussianInteger quotient, out GaussianInteger remainder)
     {
         quotient = this / other;
-        remainder = this - (quotient * other);
+        remainder = this - quotient * other;
 
         Debug.Assert(remainder.NormSquared() < other.NormSquared(), "Error in division algorithm");
     }
@@ -116,31 +136,10 @@ public readonly struct GaussianInteger(int re, int im) :
 
     public static bool operator ==(GaussianInteger left, GaussianInteger right) => left.Equals(right);
     public static bool operator !=(GaussianInteger left, GaussianInteger right) => !left.Equals(right);
-}
 
-public readonly struct GaussianPrimeIdentifier : IPrimeIdentifier<GaussianInteger>
-{
-    public static bool IsUnit(GaussianInteger x) => Math.Abs(x.Re) == 1 && Math.Abs(x.Im) == 1;
-
-    public static bool IsPrime(GaussianInteger x)
+    public override string ToString()
     {
-        if (x.Im == 0)
-        {
-            return ((x.Re & 3) == 3) &&
-                IntegerMethods.IsPrime(x.Re);
-        }
-
-        var normSquared = x.NormSquared();
-        if ((normSquared & 3) == 1)
-            return IntegerMethods.IsPrime(normSquared);
-
-        return Math.Abs(x.Re) == 1 && Math.Abs(x.Im) == 1;
+        var source = MemoryMarshal.CreateReadOnlySpan(in Re, 2);
+        return MiscHelpers.FormatString(source, 'i');
     }
-}
-
-public static class GaussianIntegerHelpers
-{
-#pragma warning disable IDE1006 // Naming Styles
-    public static GaussianInteger i(this int k) => new(0, k);
-#pragma warning restore IDE1006 // Naming Styles
 }

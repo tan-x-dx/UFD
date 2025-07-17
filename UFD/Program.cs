@@ -1,6 +1,8 @@
-﻿using UFD;
+﻿using UFD.UfdElements;
+using UFD.UfdElements.GaussianIntegers;
 
 IntegerMethods.Initialise(10_000_000);
+GaussianIntegerMethods.Initialise(10_000);
 
 var firstHundredPrimes = new IntegerMethods.PrimeEnumerable().Take(100);
 

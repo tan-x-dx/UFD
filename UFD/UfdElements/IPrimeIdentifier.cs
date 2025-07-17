@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace UFD;
+namespace UFD.UfdElements;
 
 public interface IPrimeIdentifier<T>
     where T :
@@ -18,4 +18,6 @@ public interface IPrimeIdentifier<T>
 {
     static abstract bool IsUnit(T x);
     static abstract bool IsPrime(T x);
+
+    static abstract IEnumerable<T> GetPrimeList();
 }

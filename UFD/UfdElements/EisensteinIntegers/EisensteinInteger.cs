@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
-namespace UFD.UfdElements;
+namespace UFD.UfdElements.EisensteinIntegers;
 
 public readonly struct EisensteinInteger(int re, int om) :
     IAdditionOperators<EisensteinInteger, EisensteinInteger, EisensteinInteger>,
@@ -43,8 +44,8 @@ public readonly struct EisensteinInteger(int re, int om) :
 
     public static EisensteinInteger operator *(EisensteinInteger left, EisensteinInteger right)
     {
-        int newRe = (left.Re * right.Re) - (left.Om * right.Om);
-        int newOm = (left.Om * right.Re) + (right.Om * (left.Re - left.Om));
+        int newRe = left.Re * right.Re - left.Om * right.Om;
+        int newOm = left.Om * right.Re + right.Om * (left.Re - left.Om);
 
         return new EisensteinInteger(newRe, newOm);
     }
@@ -54,8 +55,8 @@ public readonly struct EisensteinInteger(int re, int om) :
         if (right.IsZero)
             throw new DivideByZeroException();
 
-        double newRe = (left.Re * right.Re) + (right.Om * (left.Om - left.Re));
-        double newOm = (left.Om * right.Re) - (left.Re * right.Om);
+        double newRe = left.Re * right.Re + right.Om * (left.Om - left.Re);
+        double newOm = left.Om * right.Re - left.Re * right.Om;
 
         double bNorm = right.NormSquared();
 
@@ -68,7 +69,7 @@ public readonly struct EisensteinInteger(int re, int om) :
     public static EisensteinInteger operator %(EisensteinInteger left, EisensteinInteger right)
     {
         var q = left / right;
-        q = left - (q * right);
+        q = left - q * right;
 
         Debug.Assert(q.NormSquared() < right.NormSquared(), "Error in division algorithm");
 
@@ -95,12 +96,12 @@ public readonly struct EisensteinInteger(int re, int om) :
     public double RealPart() => Re - 0.5d * Om;
     public double ImaginaryPart() => Om * Sqrt3By2;
 
-    public int NormSquared() => checked((Re * Re) + (Om * Om) - (Re * Om));
+    public int NormSquared() => checked(Re * Re + Om * Om - Re * Om);
 
     public (EisensteinInteger Quotient, EisensteinInteger Remainder) DivRem(EisensteinInteger other)
     {
         var q = this / other;
-        var rem = this - (q * other);
+        var rem = this - q * other;
 
         Debug.Assert(rem.NormSquared() < other.NormSquared(), "Error in division algorithm");
 
@@ -110,7 +111,7 @@ public readonly struct EisensteinInteger(int re, int om) :
     public void DivRem(EisensteinInteger other, out EisensteinInteger quotient, out EisensteinInteger remainder)
     {
         quotient = this / other;
-        remainder = this - (quotient * other);
+        remainder = this - quotient * other;
 
         Debug.Assert(remainder.NormSquared() < other.NormSquared(), "Error in division algorithm");
     }
@@ -123,21 +124,10 @@ public readonly struct EisensteinInteger(int re, int om) :
 
     public static bool operator ==(EisensteinInteger left, EisensteinInteger right) => left.Equals(right);
     public static bool operator !=(EisensteinInteger left, EisensteinInteger right) => !left.Equals(right);
-}
 
-public readonly struct EisensteinPrimeIdentifier : IPrimeIdentifier<EisensteinInteger>
-{
-    public static bool IsUnit(EisensteinInteger x) => x.NormSquared() == 1;
-
-    public static bool IsPrime(EisensteinInteger x)
+    public override string ToString()
     {
-        throw new NotImplementedException();
+        var source = MemoryMarshal.CreateReadOnlySpan(in Re, 2);
+        return MiscHelpers.FormatString(source, 'ω');
     }
-}
-
-public static class EisensteinIntegerHelpers
-{
-#pragma warning disable IDE1006 // Naming Styles
-    public static EisensteinInteger i(this int k) => new(0, k);
-#pragma warning restore IDE1006 // Naming Styles
 }
