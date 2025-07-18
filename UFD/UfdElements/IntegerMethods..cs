@@ -24,7 +24,10 @@ public static class IntegerMethods
 
         var result = new BitArray(maxInt >>> 1, true);
 
-        var i = 3;
+        var enumerator = result.GetEnumerator();
+
+        enumerator.MoveNext();
+        var i = ConvertToPrime(enumerator.Current);
 
         var iLimit = 1 + (int)Math.Sqrt(result.Length);
 
@@ -41,7 +44,8 @@ public static class IntegerMethods
                 bitIndex = ConvertToBitIndex(j);
             }
 
-            i += 2;
+            enumerator.MoveNext();
+            i = ConvertToPrime(enumerator.Current);
         }
 
         return result;
@@ -64,10 +68,26 @@ public static class IntegerMethods
     private static int ConvertToBitIndex(int n) => (n >>> 1) - 1;
     private static int ConvertToPrime(int bitIndex) => (bitIndex << 1) + 3;
 
+    public static int[] GetAllPrimes()
+    {
+        var result = new int[NumberOfStoredPrimes];
+
+        var primeEnumerable = new PrimeEnumerable();
+        var i = 0;
+        foreach (var prime in primeEnumerable)
+        {
+            result[i++] = prime;
+        }
+
+        Debug.Assert(i == result.Length);
+
+        return result;
+    }
+
     public sealed class PrimeEnumerable : IEnumerable<int>, IEnumerator<int>
     {
-        private int _current = -1;
         private BitArray.BitEnumerator _bitEnumerator = _primeBits.GetEnumerator();
+        private int _current = -1;
 
         public int Current => _current;
 
@@ -99,20 +119,4 @@ public static class IntegerMethods
         IEnumerator<int> IEnumerable<int>.GetEnumerator() => this;
         IEnumerator IEnumerable.GetEnumerator() => this;
     }
-}
-
-public readonly ref struct IntegerPrimeIdentifier : IPrimeIdentifier<int>
-{
-    public static int Norm(int x) => x * x;
-    public static double Modulus(int x) => Math.Abs(x);
-    public static bool IsUnit(int x) => x == 1 || x == -1;
-    public static bool IsPrime(int x) => IntegerMethods.IsPrime(x);
-
-    public static void DivRem(int left, int right, out int quotient, out int remainder)
-    {
-        (quotient, remainder) = int.DivRem(left, right);
-    }
-
-    public static IEnumerable<int> GetPrimeList() => new IntegerMethods.PrimeEnumerable();
-
 }

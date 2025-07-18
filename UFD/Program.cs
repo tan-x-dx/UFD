@@ -1,8 +1,10 @@
 ﻿using UFD.UfdElements;
 using UFD.UfdElements.GaussianIntegers;
 
-IntegerMethods.Initialise(10_000_000);
+IntegerMethods.Initialise(100_000_000);
 GaussianIntegerMethods.Initialise(10_000);
+
+var primes = IntegerMethods.GetAllPrimes();
 
 var n = 11638725;
 var primeFactorsOfN = IntFactorisation.GetPrimeFactors(n);
