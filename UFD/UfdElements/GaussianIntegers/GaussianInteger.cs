@@ -53,7 +53,7 @@ public readonly struct GaussianInteger(int re, int im) :
 
         double bNorm = right.Norm();
 
-        int newRe = left.Re * right.Re + left.Im * right.Re;
+        int newRe = left.Re * right.Re + left.Im * right.Im;
         int newIm = left.Im * right.Re - left.Re * right.Im;
 
         newRe = (int)Math.Round(newRe / bNorm);
@@ -123,7 +123,7 @@ public readonly struct GaussianInteger(int re, int im) :
     public void DivRem(GaussianInteger other, out GaussianInteger quotient, out GaussianInteger remainder)
     {
         quotient = this / other;
-        remainder = this - quotient * other;
+        remainder = this - (quotient * other);
 
         Debug.Assert(remainder.Norm() < other.Norm(), "Error in division algorithm");
     }
