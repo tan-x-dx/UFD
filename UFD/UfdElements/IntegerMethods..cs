@@ -102,7 +102,10 @@ public static class IntegerMethods
             var moveNext = _bitEnumerator.MoveNext();
             var bitIndex = _bitEnumerator.Current;
 
-            _current = ConvertToPrime(bitIndex);
+            _current = moveNext
+                ? ConvertToPrime(bitIndex)
+                : -1;
+
             return moveNext;
         }
 
