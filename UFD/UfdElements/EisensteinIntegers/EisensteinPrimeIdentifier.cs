@@ -1,6 +1,6 @@
 ﻿namespace UFD.UfdElements.EisensteinIntegers;
 
-public readonly struct EisensteinPrimeIdentifier : IPrimeIdentifier<EisensteinInteger>
+public readonly ref struct EisensteinPrimeIdentifier : IPrimeIdentifier<EisensteinInteger>
 {
     public static int Norm(EisensteinInteger x) => x.Norm();
     public static double Modulus(EisensteinInteger x)

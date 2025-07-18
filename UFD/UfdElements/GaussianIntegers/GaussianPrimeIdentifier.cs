@@ -1,6 +1,6 @@
 ﻿namespace UFD.UfdElements.GaussianIntegers;
 
-public readonly struct GaussianPrimeIdentifier : IPrimeIdentifier<GaussianInteger>
+public readonly ref struct GaussianPrimeIdentifier : IPrimeIdentifier<GaussianInteger>
 {
     public static int Norm(GaussianInteger x)
     {

@@ -101,7 +101,7 @@ public static class IntegerMethods
     }
 }
 
-public readonly struct IntegerPrimeIdentifier : IPrimeIdentifier<int>
+public readonly ref struct IntegerPrimeIdentifier : IPrimeIdentifier<int>
 {
     public static int Norm(int x) => x * x;
     public static double Modulus(int x) => Math.Abs(x);

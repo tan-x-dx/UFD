@@ -4,7 +4,7 @@ using UFD.UfdElements;
 namespace UFD;
 
 public static class FactorisationMethods<TPrimeIdentifier, T>
-    where TPrimeIdentifier : struct, IPrimeIdentifier<T>
+    where TPrimeIdentifier : IPrimeIdentifier<T>, allows ref struct
     where T :
         struct,
         IAdditionOperators<T, T, T>,

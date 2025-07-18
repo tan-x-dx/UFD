@@ -1,13 +1,13 @@
-﻿using UFD;
-using UFD.UfdElements;
+﻿using UFD.UfdElements;
 using UFD.UfdElements.GaussianIntegers;
 
 IntegerMethods.Initialise(10_000_000);
 GaussianIntegerMethods.Initialise(10_000);
 
-for (var i = 1; i <= 300; i++)
-{
-    var primeFactors = FactorisationMethods<IntegerPrimeIdentifier, int>.GetPrimeFactors(i);
+var n = 11638725;
+var primeFactorsOfN = IntFactorisation.GetPrimeFactors(n);
+Console.WriteLine($"{n} = {string.Join('*', primeFactorsOfN)}");
 
-    Console.WriteLine(i + " = " + string.Join('*', primeFactors));
-}
+var g = 13 + 21.i();
+var primeFactorsOfG = GaussianIntegerFactorisation.GetPrimeFactors(g);
+Console.WriteLine($"{g} -> {string.Join(',', primeFactorsOfG)}");
