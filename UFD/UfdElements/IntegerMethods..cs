@@ -104,6 +104,7 @@ public static class IntegerMethods
 public readonly struct IntegerPrimeIdentifier : IPrimeIdentifier<int>
 {
     public static int Norm(int x) => x * x;
+    public static double Modulus(int x) => Math.Abs(x);
     public static bool IsUnit(int x) => x == 1 || x == -1;
     public static bool IsPrime(int x) => IntegerMethods.IsPrime(x);
 
@@ -113,4 +114,5 @@ public readonly struct IntegerPrimeIdentifier : IPrimeIdentifier<int>
     }
 
     public static IEnumerable<int> GetPrimeList() => new IntegerMethods.PrimeEnumerable();
+
 }

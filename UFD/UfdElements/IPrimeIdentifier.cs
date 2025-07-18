@@ -18,6 +18,7 @@ public interface IPrimeIdentifier<T>
         IUnaryPlusOperators<T, T>
 {
     static abstract int Norm(T x);
+    static abstract double Modulus(T x);
     static abstract bool IsUnit(T x);
     static abstract bool IsPrime(T x);
 

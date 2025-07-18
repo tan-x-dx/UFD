@@ -14,23 +14,26 @@ public static class GaussianIntegerMethods
 
     private static HashSet<GaussianInteger> GenerateGaussianPrimes(int maxInt)
     {
-        var result = new HashSet<GaussianInteger>(maxInt, new AssociatedGaussianIntegerEqualityComparer());
+        var result = new HashSet<GaussianInteger>(maxInt, new AssociatedGaussianIntegerEqualityComparer())
+        {
+            new(1, 1)
+        };
 
         var re = 2;
         while (result.Count < maxInt)
         {
-            var x = re;
+            var im = (re & 1) ^ 1;
 
-            while (x > 0)
+            while (im < re)
             {
-                var y = re - x;
-                var g = new GaussianInteger(x, y);
-                if (GaussianPrimeIdentifier.IsPrime(g))
+                var g1 = new GaussianInteger(re, im);
+                if (GaussianPrimeIdentifier.IsPrime(g1))
                 {
-                    result.Add(g);
+                    result.Add(g1);
+                    result.Add(new GaussianInteger(im, re));
                 }
 
-                x--;
+                im += 2;
             }
 
             re++;

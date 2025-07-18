@@ -2,7 +2,23 @@
 
 public readonly struct GaussianPrimeIdentifier : IPrimeIdentifier<GaussianInteger>
 {
-    public static int Norm(GaussianInteger x) => x.Norm();
+    public static int Norm(GaussianInteger x)
+    {
+        var modulus = Modulus(x);
+        return (int)Math.Round(modulus * modulus);
+    }
+
+    public static double Modulus(GaussianInteger x)
+    {
+        var halfRe = (double)x.Re;
+        halfRe /= 2;
+        var halfIm = (double)x.Im;
+        halfIm /= 2;
+
+        var halfModulus = Math.Sqrt((halfRe * halfRe) + (halfIm * halfIm));
+        return halfModulus * 2;
+    }
+
     public static bool IsUnit(GaussianInteger x) => x.Norm() == 1;
     public static bool IsPrime(GaussianInteger x)
     {
@@ -14,9 +30,9 @@ public readonly struct GaussianPrimeIdentifier : IPrimeIdentifier<GaussianIntege
                 IntegerMethods.IsPrime(x.Re);
         }
 
-        var normSquared = x.Norm();
-        if ((normSquared & 3) == 1)
-            return IntegerMethods.IsPrime(normSquared);
+        var norm = Norm(x);
+        if ((norm & 3) == 1)
+            return IntegerMethods.IsPrime(norm);
 
         return x.Re == 1 && x.Im == 1;
     }
@@ -27,4 +43,5 @@ public readonly struct GaussianPrimeIdentifier : IPrimeIdentifier<GaussianIntege
     }
 
     public static IEnumerable<GaussianInteger> GetPrimeList() => GaussianIntegerMethods.GaussianPrimesEnumerable();
+
 }

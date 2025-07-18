@@ -31,7 +31,7 @@ public static class FactorisationMethods<TPrimeIdentifier, T>
 
         while (!TPrimeIdentifier.IsUnit(x))
         {
-            if (TPrimeIdentifier.Norm(x) < TPrimeIdentifier.Norm(currentPrime))
+            if (TPrimeIdentifier.Modulus(x) < TPrimeIdentifier.Modulus(currentPrime))
                 yield break;
 
             TPrimeIdentifier.DivRem(x, currentPrime, out var quotient, out var remainder);
