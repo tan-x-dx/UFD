@@ -24,6 +24,23 @@ public static class IntegerMethods
 
         var result = new BitArray(maxInt >>> 1, true);
 
+        // Knock out the non-primes for the first uint in the array
+        result.ClearBit(ConvertToBitIndex(9));
+        result.ClearBit(ConvertToBitIndex(15));
+        result.ClearBit(ConvertToBitIndex(21));
+        result.ClearBit(ConvertToBitIndex(25));
+        result.ClearBit(ConvertToBitIndex(27));
+        result.ClearBit(ConvertToBitIndex(33));
+        result.ClearBit(ConvertToBitIndex(35));
+        result.ClearBit(ConvertToBitIndex(39));
+        result.ClearBit(ConvertToBitIndex(45));
+        result.ClearBit(ConvertToBitIndex(49));
+        result.ClearBit(ConvertToBitIndex(51));
+        result.ClearBit(ConvertToBitIndex(55));
+        result.ClearBit(ConvertToBitIndex(57));
+        result.ClearBit(ConvertToBitIndex(63));
+        result.ClearBit(ConvertToBitIndex(65));
+
         var enumerator = result.GetEnumerator();
 
         enumerator.MoveNext();
