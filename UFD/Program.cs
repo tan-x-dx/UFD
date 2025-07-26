@@ -11,8 +11,9 @@ for (var i = 1; i <= 1000; i++)
     {
         Console.WriteLine($"f({i}) = {F(i)}");
     }
-    catch
+    catch(Exception ex)
     {
+        Console.WriteLine(ex.Message);
     }
 }
 
